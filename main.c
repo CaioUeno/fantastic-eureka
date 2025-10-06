@@ -1,4 +1,5 @@
-#include "src/app.h"
+#include "src/app/app.h"
+#include "src/handlers/handlers.h"
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -17,12 +18,14 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-    
-  struct App app = build_app();
+
+    struct App app = build_app();
+
+    add_route(&app.router, health_handler);
 
     serve(&app);
 
     close(app.socket);
-    
+
     return 0;
 }
