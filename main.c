@@ -19,9 +19,11 @@
 
 int main(int argc, char *argv[]) {
 
-    struct App app = build_app();
+    struct app app = make_app();
 
-    add_route(&app.router, health_handler);
+    char *method = "GET";
+    char *prefix = "/health";
+    add_route(&app.router, health_handler, method, prefix);
 
     serve(&app);
 

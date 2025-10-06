@@ -10,10 +10,12 @@ struct route {
 };
 
 struct router {
-    struct route *route;
+    struct route *routes[10];
 };
 
 struct router make_router();
-void add_route(struct router *router, handler new_handler);
+void add_route(struct router *router, handler new_handler, char *method,
+               char *prefix);
+handler redirect(struct router *router, char* method, char *prefix);
 
 #endif

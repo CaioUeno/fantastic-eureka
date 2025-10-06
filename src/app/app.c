@@ -6,9 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 
-struct App build_app() {
+struct app make_app() {
 
-    struct App app;
+    struct app app;
 
     app.domain = AF_INET;
     app.port = 8090;
@@ -56,11 +56,10 @@ typedef void (*nothing)();
 
 void ha() {};
 
-void serve(struct App *app) {
+void serve(struct app *app) {
 
-    struct Client client = build_client();
+    struct client client = make_client();
 
-    printf("%p\n", &app->router.route->handler);
     printf("listening\n");
 
     while (1) {
@@ -73,7 +72,9 @@ void serve(struct App *app) {
 
         char *r = (char *)malloc(104857600 * sizeof(char));
 
-        (*app->router.route->handler)(in, r);
+        handler handler = redirect(&app->router, "GET", "/health");
+
+        (*handler)(in, r);
 
         free(in);
 
@@ -81,7 +82,7 @@ void serve(struct App *app) {
     }
 }
 
-void accept_connection(struct App *app, struct Client *client) {
+void accept_connection(struct app *app, struct client *client) {
 
     *client->client_fd =
         accept(app->socket, (struct sockaddr *)&client->client_addr,

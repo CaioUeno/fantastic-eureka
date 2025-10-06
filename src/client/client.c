@@ -1,8 +1,9 @@
 #include "client.h"
 #include "../router/router.h"
-struct Client build_client() {
 
-    struct Client client;
+struct client make_client() {
+
+    struct client client;
 
     client.client_addr_len = sizeof(client.client_addr);
     client.client_fd = malloc(sizeof(int));
@@ -11,7 +12,7 @@ struct Client build_client() {
     return client;
 }
 
-char *receive_data(struct Client *client) {
+char *receive_data(struct client *client) {
 
     char *buffer = (char *)malloc(client->buffer_size * sizeof(char));
 
@@ -24,19 +25,19 @@ char *receive_data(struct Client *client) {
     return buffer;
 }
 
-void send_response(struct Client *client, char *response) {
+void send_response(struct client *client, char *response) {
 
     send(*client->client_fd, response, (size_t)10000, 0);
 
     close(*client->client_fd);
 }
 
-void handle(struct Client *client, struct router *router) {
+void handle(struct client *client, struct router *router) {
     printf("HANDLE\n");
-    
+
     char *in = receive_data(client);
 
-    printf("%p\n", router->route->handler);
+    printf("%p\n", router->routes[0]->handler);
 
     printf("HANDLE\n");
 
