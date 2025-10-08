@@ -48,13 +48,8 @@ struct app make_app() {
 
     app.router = router;
 
-
     return app;
 }
-
-typedef void (*nothing)();
-
-void ha() {};
 
 void serve(struct app *app) {
 
@@ -68,17 +63,22 @@ void serve(struct app *app) {
 
         printf("connection accepted\n");
 
-        char *in = receive_data(&client);
+        char *request = receive_data(&client);
 
-        char *r = (char *)malloc(104857600 * sizeof(char));
+        char *request_method = parse_method(request);
+        printf("method: %s\n", request_method);
+        char *request_path = parse_path(request);
+         printf("path: %s\n", request_path);
 
-        handler handler = redirect(&app->router, "GET", "/health");
+        handler handler = redirect(&app->router, request_method, request_path);
 
-        (*handler)(in, r);
+        char *response = (char *)malloc(104857600 * sizeof(char));
 
-        free(in);
+        (*handler)(request, response);
 
-        send_response(&client, r);
+        free(request);
+
+        send_response(&client, response);
     }
 }
 

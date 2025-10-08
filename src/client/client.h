@@ -19,8 +19,10 @@ struct client make_client();
 
 char *receive_data(struct client *client);
 
-void send_response(struct client *client, char *response);
+char *parse_method(char *request);
 
-void handle(struct client *client, struct router *router);
+char *parse_path(char* request);
+
+void send_response(struct client *client, char *response);
 
 #endif

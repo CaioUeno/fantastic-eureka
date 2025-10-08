@@ -4,15 +4,10 @@
 #include <string.h>
 
 struct router make_router() {
-    printf("hey\n");
-    struct route *route = (struct route *)malloc(10 * sizeof(struct route));
-    route->method = (char *)malloc(20 * sizeof(char));
-    route->prefix = (char *)malloc(20 * sizeof(char));
 
     struct router router;
-    router.routes[0] = route;
 
-    printf("ha\n");
+    router.last_route_idx = 0;
 
     return router;
 }
@@ -20,12 +15,17 @@ struct router make_router() {
 void add_route(struct router *router, handler new_handler, char *method,
                char *prefix) {
 
-    printf("AQUI\n");
-    printf("%p\n\n", router->routes[0]->method);
+    struct route *route = (struct route *)malloc(sizeof(struct route));
 
-    strncpy(router->routes[0]->method, method, 20);
-    strncpy(router->routes[0]->prefix, prefix, 20);
-    router->routes[0]->handler = *new_handler;
+    route->method = (char *)malloc(METHOD_MAX_SIZE * sizeof(char));
+    strncpy(route->method, method, METHOD_MAX_SIZE);
+
+    route->prefix = (char *)malloc(PREFIX_MAX_SIZE * sizeof(char));
+    strncpy(route->prefix, prefix, PREFIX_MAX_SIZE);
+
+    route->handler = *new_handler;
+
+    router->routes[router->last_route_idx++] = route;
 }
 
 handler redirect(struct router *router, char *method, char *prefix) {
@@ -34,6 +34,7 @@ handler redirect(struct router *router, char *method, char *prefix) {
 
     for (int i = 0; i < 10; i++) {
         printf("Route %d\n", i);
+        printf("method %s\n", router->routes[i]->method);
 
         int is_method_equal = strcmp(router->routes[0]->method, method);
         if (is_method_equal == 0) {

@@ -25,34 +25,54 @@ char *receive_data(struct client *client) {
     return buffer;
 }
 
+char *parse_method(char *request) {
+    char firstLine[100];
+    char *a = strchr(request, '\n');
+
+    size_t length = a - request;
+
+    strncpy(firstLine, request, length);
+
+    printf("FIRST LINE %s\n", firstLine);
+
+    char *buffer = (char *)malloc(10 * sizeof(char));
+
+    length = strchr(firstLine, ' ') - firstLine;
+
+    strncpy(buffer, firstLine, length);
+
+    printf("METHOD %s\n", buffer);
+
+    return buffer;
+}
+
+char *parse_path(char *request) {
+
+    char firstLine[100];
+    char *a = strchr(request, '\n');
+
+    size_t length = a - request;
+
+    strncpy(firstLine, request, length);
+
+    printf("FIRST LINE %s\n", firstLine);
+
+    char *buffer = (char *)malloc(10 * sizeof(char));
+
+    char *skip =strchr(firstLine, ' ')+1;
+
+    length = strchr(skip, ' ') - skip;
+
+    strncpy(buffer, skip, length);
+
+    printf("PATH %s\n", buffer);
+
+    return buffer;
+}
+
 void send_response(struct client *client, char *response) {
 
     send(*client->client_fd, response, (size_t)10000, 0);
 
     close(*client->client_fd);
-}
-
-void handle(struct client *client, struct router *router) {
-    printf("HANDLE\n");
-
-    char *in = receive_data(client);
-
-    printf("%p\n", router->routes[0]->handler);
-
-    printf("HANDLE\n");
-
-    char response[1000];
-    char *r = response;
-
-    // handler handler = redirect(router, method, prefix);
-
-    // r = (*router->route->handler)(in, r);
-
-    free(in);
-    char *out = "HTTP/1.1 200 OK\r\n"
-                "Content-Type: application/json\r\n"
-                "\r\n"
-                "'{message: 'up and running!'}'\r\n";
-
-    send_response(client, out);
 }

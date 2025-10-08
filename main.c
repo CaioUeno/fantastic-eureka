@@ -21,9 +21,7 @@ int main(int argc, char *argv[]) {
 
     struct app app = make_app();
 
-    char *method = "GET";
-    char *prefix = "/health";
-    add_route(&app.router, health_handler, method, prefix);
+    add_route(&app.router, health_handler, "GET", "/health");
 
     serve(&app);
 
